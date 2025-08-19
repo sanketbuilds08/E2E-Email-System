@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Email Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background-color: #2d89ef;
+      color: white;
+      text-align: center;
+      padding: 1rem 0;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .tab-button {
+      background-color: #e3e8ef;
+      border: none;
+      padding: 0.8rem 2rem;
+      cursor: pointer;
+      font-size: 1rem;
+      margin: 0 0.5rem;
+      border-radius: 8px 8px 0 0;
+      transition: background 0.3s;
+    }
+
+    .tab-button.active {
+      background-color: #ffffff;
+      border-bottom: 2px solid white;
+      font-weight: bold;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 2rem;
+      background-color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin: 0 auto;
+      border-radius: 0 0 12px 12px;
+      max-width: 500px;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .center-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    select, button {
+      padding: 0.6rem 1rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 80%;
+      max-width: 300px;
+    }
+
+    button.send-btn {
+      background-color: #2d89ef;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button.send-btn:hover {
+      background-color: #1b5dbf;
+    }
+
+    /* Popup */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 400px;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      padding: 1.5rem;
+      z-index: 1000;
+    }
+
+    .popup label {
+      display: block;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      color: #333;
+    }
+
+    .popup input, .popup textarea, .popup select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.2rem;
+      font-size: 0.9rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .popup-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      z-index: 999;
+    }
+
+    .confirmation {
+      text-align: center;
+      font-size: 1rem;
+      color: green;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">Application Mail Dashboard</div>
+
+  <div class="tabs">
+    <button class="tab-button active" onclick="openTab('impact')">Impact2 Mail</button>
+    <button class="tab-button" onclick="openTab('escalation')">Escalation</button>
+    <button class="tab-button" onclick="openTab('deescalation')">De-escalation</button>
+  </div>
+
+  <div id="impact" class="tab-content active">
+    <div class="center-box">
+      <select id="impactApp">
+        <option value="">-- Select Application --</option>
+        <option value="AppOne">AppOne</option>
+        <option value="AppTwo">AppTwo</option>
+      </select>
+      <button class="send-btn" onclick="openPopup('impact')">Send</button>
+    </div>
+  </div>
+
+  <div id="escalation" class="tab-content">
+    <div class="center-box">
+      <select id="escalationApp">
+        <option value="">-- Select Application --</option>
+        <option value="AppOne">AppOne</option>
+        <option value="AppTwo">AppTwo</option>
+      </select>
+      <button class="send-btn" onclick="openPopup('escalation')">Send</button>
+    </div>
+  </div>
+
+  <div id="deescalation" class="tab-content">
+    <div class="center-box">
+      <select id="deescalationApp">
+        <option value="">-- Select Application --</option>
+        <option value="AppOne">AppOne</option>
+        <option value="AppTwo">AppTwo</option>
+      </select>
+      <button class="send-btn" onclick="openPopup('deescalation')">Send</button>
+    </div>
+  </div>
+
+  <!-- Popup -->
+  <div class="overlay" id="overlay"></div>
+  <div class="popup" id="popup">
+    <label>From:</label>
+    <input type="text" value="beuniquee2004@gmail.com" readonly>
+    <label>To:</label>
+    <input type="text" value="project-team@example.com" readonly>
+    <label>Cc:</label>
+    <input type="text" value="team-leads@example.com" readonly>
+    <label>Bcc:</label>
+    <input type="text" value="manager@example.com" readonly>
+
+    <label>Subject:</label>
+    <input type="text" id="subject">
+
+    <label>Message Body:</label>
+    <textarea rows="4" id="messageBody"></textarea>
+
+    <div class="popup-buttons">
+      <button class="send-btn" onclick="sendMail()">Send Mail</button>
+      <button onclick="closePopup()">Cancel</button>
+    </div>
+    <div class="confirmation" id="confirmationMessage"></div>
+  </div>
+
+  <script>
+    function openTab(tabName) {
+      const tabs = document.querySelectorAll('.tab-content');
+      const buttons = document.querySelectorAll('.tab-button');
+      tabs.forEach(t => t.classList.remove('active'));
+      buttons.forEach(b => b.classList.remove('active'));
+
+      document.getElementById(tabName).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    function openPopup(type) {
+      let app = document.getElementById(type + "App").value;
+      if (!app) {
+        alert("Please select an application.");
+        return;
+      }
+
+      const subject = (type === "impact") ?
+        `[Impact2] Ticket ID - ${app}` :
+        (type === "escalation") ?
+        `[Escalation] Ticket ID - ${app}` :
+        `[De-escalation] ${app} Available`;
+
+      const message = (type === "escalation") ?
+        `Escalation Details:\nDue to failure, ${app} is not available.\nWe will provide update once the application is available.` :
+        (type === "deescalation") ?
+        `De-escalation Details:\n${app} is available now.` :
+        `Please refer to the ticket for application ${app}.`;
+
+      document.getElementById("subject").value = subject;
+      document.getElementById("messageBody").value = message;
+
+      document.getElementById("overlay").style.display = "block";
+      document.getElementById("popup").style.display = "block";
+    }
+
+    function closePopup() {
+      document.getElementById("overlay").style.display = "none";
+      document.getElementById("popup").style.display = "none";
+      document.getElementById("confirmationMessage").innerText = "";
+    }
+
+    function sendMail() {
+      const subject = document.getElementById("subject").value;
+      const message = document.getElementById("messageBody").value;
+
+      fetch("/send_mail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject, message })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          document.getElementById("confirmationMessage").innerText = "Mail sent successfully!";
+          setTimeout(closePopup, 2000);
+        } else {
+          document.getElementById("confirmationMessage").innerText = "Failed to send mail.";
+        }
+      })
+      .catch(() => {
+        document.getElementById("confirmationMessage").innerText = "Error while sending mail.";
+      });
+    }
+  </script>
+</body>
+</html>
